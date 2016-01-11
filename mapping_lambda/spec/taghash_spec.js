@@ -109,20 +109,23 @@ describe("dynamo_prep function", function() {
 			}
 		};
 		var taghash = new TagHash();
-		expect(taghash.dynamo_prep(maps)).toEqual([
-		{ M:
-			{
-				map_name:"all",
-				stuff:"things",
-				things:"stuff"
+		expect(taghash.dynamo_prep(maps)[0]).toEqual(
+		{ 
+			map_name:{S:"all"},
+			data:{ M: {
+					stuff:"things",
+					things:"stuff"
+				}
 			}
-		},
-		{ M: 
-			{
-				map_name:"stuff",
+		});
+		expect(taghash.dynamo_prep(maps)[1]).toEqual(
+		{ 
+			map_name:{S:"stuff"},
+			data: { M: {
 				stuff:"things"
+				}
 			}
-		}]);
+		});
 	})
 })
 });

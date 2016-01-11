@@ -49,8 +49,10 @@ Taghash.prototype.parsetags = function(tags) {
 var dynamo_prep = Taghash.prototype.dynamo_prep = function(map) {
 	var items = [];
 	for (var key in map) {
-		map[key].map_name=key;
-		items.push({M:map[key]});
+		items.push({
+			map_name:{S:key},
+			data:{M:map[key]}
+		});
 	}
 	return items;
 }
