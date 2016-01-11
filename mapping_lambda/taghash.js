@@ -1,6 +1,6 @@
 var Taghash = function() {
 	this.maps = {
-		all:[]
+		all_tags:[]
 	};
 };
 
@@ -8,28 +8,39 @@ Taghash.prototype.parsetags = function(tags) {
 	var self = this;
 	for (var i = tags.length - 1; i >= 0; i--) {
 		var tag = tags[i];
-		self.maps.all.push({
+		self.maps.all_tags.push({
 			tag:tag.tag,
 			count:tag.articles.length,
 			med_date:med_date(tag.articles)
 		});
+
+		self.maps[tag.tag] = {
+			tag:tag.tag,
+			cities:[]
+		};
+
 		for (var key in tag) {
-			if (key.slice(0,9)=="city_articles") {
-				var city = key.slice(9),
+			if (key.slice(0,13)=="city_articles") {
+				var city = key.slice(13),
 				city_name=tag['city_name'+city];
 				if (!self.maps.hasOwnProperty(city)) {
 					self.maps[city] = {
-						city:cityame,
+						city:city_name,
 						tags:[]
 					};
 				}
 				self.maps[city].tags.push({
-					tag:tag.name,
-					
+					tag:tag.tag,
+					count:tag[key].length,
+					med_date:med_date(tag[key]),
+					articles:tag[key]
 				});
-				concat(tag['city_articles' + city]);
-			} else {
-
+				self.maps[tag.tag].cities.push({
+					city:city_name,
+					count:tag[key].length,
+					med_date:med_date(tag[key]),
+					articles:tag[key]
+				})
 			}
 			/*
 			* If the tag starts with city_name get the name of the city.
