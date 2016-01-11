@@ -42,22 +42,18 @@ Taghash.prototype.parsetags = function(tags) {
 					articles:tag[key]
 				})
 			}
-			/*
-			* If the tag starts with city_name get the name of the city.
-			* See if hash has that city yet. If not create an array.
-			* Push this tag to the city array, along with the count and med_date of city_articles
-			*/
-
-			/*
-			* Do a similar thing for people. Find each tag starting with person and move them into the appropriate city hash.
-			*/
-
-			/*
-			* Finally, do a similar thing for each city_tag. 
-			*/
 		}
 	}
 };
+
+var dynamo_prep = Taghash.prototype.dynamo_prep = function(map) {
+	var items = [];
+	for (var key in map) {
+		map[key].map_name=key;
+		items.push({M:map[key]});
+	}
+	return items;
+}
 
 var med_date = Taghash.prototype.med_date = function(releases) {
 	//Sort the array of releases by date

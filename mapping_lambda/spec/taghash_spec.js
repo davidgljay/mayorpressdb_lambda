@@ -74,7 +74,6 @@ describe("TagHash", function() {
 				med_date:new Date("Sun Jan 10 2016 00:00:00 GMT-0500 (EST)"),
 				articles:articles
 			});
-			console.log(taghash.maps);
 		});
 
 		it ("Should add cities of the proper format to list of tags", function() {
@@ -97,4 +96,33 @@ describe("TagHash", function() {
 			//TODO, I think this may require a different structure.
 		})
 	});
+
+describe("dynamo_prep function", function() {
+	it("format for posting in dynamodb", function() {
+		var maps = {
+			all:{
+				stuff:"things",
+				things:"stuff"
+			},
+			stuff:{
+				stuff:"things"
+			}
+		};
+		var taghash = new TagHash();
+		expect(taghash.dynamo_prep(maps)).toEqual([
+		{ M:
+			{
+				map_name:"all",
+				stuff:"things",
+				things:"stuff"
+			}
+		},
+		{ M: 
+			{
+				map_name:"stuff",
+				stuff:"things"
+			}
+		}]);
+	})
+})
 });
