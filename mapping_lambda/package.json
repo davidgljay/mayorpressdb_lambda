@@ -7,7 +7,8 @@
     "test": "jasmine-node ./spec"
   },
   "dependencies": {
-  	"promise":"latest"
+  	"promise":"latest",
+    "aws-sdk":"latest"
   },
   "author": "David Jay",
   "license": "MIT"

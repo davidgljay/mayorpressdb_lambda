@@ -24,10 +24,9 @@ module.exports.post = function(data, path) {
 				else resolve(data);
 			});
 		})
-	};
-}
+};
 
-modul.exports.batch_post = function(items) {
+module.exports.batch_post = function(items) {
 	var promise_array = [];
 	for (var i = items.length - 1; i >= 0; i--) {
 		promise_array.push(items[i].data, items[i].path);

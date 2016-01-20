@@ -3,7 +3,7 @@
 //This will involve a large word freqency hashmap probably, possibly an array with mergesort.
 
 var dynamo = require('./api/dynamo'),
-TagHash = require('./tag_hash.js'),
+TagHash = require('./taghash.js'),
 s3 = require('./api/s3');
 
 var tag_hash = new TagHash();
