@@ -1,3 +1,5 @@
+'use strict';
+
 var Taghash = function() {
 	this.maps = {
 		all_tags:[]
@@ -35,7 +37,7 @@ Taghash.prototype.parsetags = function(tags) {
 	var self = this;
 	for (var i = tags.length - 1; i >= 0; i--) {
 		var tag = tags[i];
-		self.maps'all'.push({
+		self.maps.all.push({
 			tag:tag.tag,
 			count:tag.articles.length,
 			med_date:med_date(tag.articles)
@@ -67,7 +69,7 @@ Taghash.prototype.parsetags = function(tags) {
 					count:tag[key].length,
 					med_date:med_date(tag[key]),
 					articles:tag[key]
-				})
+				});
 
 				//TODO: Add people
 				//TODO: Add crosstags by city
@@ -76,7 +78,7 @@ Taghash.prototype.parsetags = function(tags) {
 	}
 };
 
-var dynamo_prep = Taghash.prototype.dynamo_prep = function(map) {
+Taghash.prototype.dynamo_prep = function(map) {
 	var items = [];
 	for (var key in map) {
 		items.push({
@@ -85,7 +87,7 @@ var dynamo_prep = Taghash.prototype.dynamo_prep = function(map) {
 		});
 	}
 	return items;
-}
+};
 
 var med_date = Taghash.prototype.med_date = function(releases) {
 	//Sort the array of releases by date

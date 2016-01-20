@@ -1,3 +1,5 @@
+'use strict'
+
 var AWS = require('aws-sdk'),
 Promise = require('promise');
 
@@ -44,12 +46,12 @@ module.exports.batch_update = function(items) {
 //TODO: Handle that limitation in this class.
 
 var batch_post = module.exports.batch_post = function(items) {
-	return post(results.splice(0,24))
+	return post(items.splice(0,24))
 	.then(function() {
-		if (results.length==0) {
+		if (items.length===0) {
 			return;
-		};
-		return batch_post(results);
+		}
+		return batch_post(items);
 	});
 };
 
@@ -67,10 +69,10 @@ var post = module.exports.post = function(items) {
 		}
 		dynamodb.batchWriteItem(formatted_items, function(err, response) {
 			if (err) {
-				logger.error("Error posting item to dynamo:" + err);
+				console.error("Error posting item to dynamo:" + err);
 				reject(err);
 			} else {
-				logger.info("Item post to dynamo successful\n" + JSON.stringify(response));
+				console.info("Item post to dynamo successful\n" + JSON.stringify(response));
 				resolve();
 			}
 		});			
@@ -104,7 +106,7 @@ var put_params = function(items) {
 	}
 };
 
-var scan = function(table_name, start_key) {
+module.exports.scan = function(table_name, start_key) {
 	var params = {
 		TableName:table_name,
 		ConsistentRead:'true',
@@ -113,8 +115,8 @@ var scan = function(table_name, start_key) {
 	};
 	return new Promise(function(resolve, reject) {
 		dynamodb.scan(params, function(err, data) {
-			if (err) reject(err)
+			if (err) reject(err);
 			else resolve(data);
 		});
 	})
-}
+};
