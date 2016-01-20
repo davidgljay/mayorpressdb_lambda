@@ -3,7 +3,8 @@
 
 var promise = require('Promise'),
 dynamo = require('./api/dynamo'),
-TagHash = require('./tag_hash.js');
+TagHash = require('./tag_hash.js'),
+s3 = require('./api/s3');
 
 var tag_hash = new TagHash();
 
@@ -23,7 +24,7 @@ var scan_dynamo = function(lastkey) {
 	return dynamo.scan(proces.env.SCAN_DYNAMO, lastkey)
 	 	.then(function(results) {
 			console.log(results);
-			tag_hash.parse(results);
+			tag_hash.parsetags(results.Items);
 			if(results.lastKey!=null) {
 				return scan_dynamo(lastkey)
 			} else {
