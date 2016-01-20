@@ -37,7 +37,7 @@ Taghash.prototype.parsetags = function(tags) {
 	var self = this;
 	for (var i = tags.length - 1; i >= 0; i--) {
 		var tag = tags[i],
-		tagname = tag.tag.S.replace(/[^a-z,0-9]/i,'_');
+		tagname = tag.tag.S.replace(/[^a-z,0-9]/ig,'_');
 
 		self.maps.all.push({
 			tag:tagname,
