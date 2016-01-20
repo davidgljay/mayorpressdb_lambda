@@ -1,7 +1,7 @@
 'use strict'
 
-var AWS = require('aws-sdk'),
-Promise = require('promise');
+var AWS = require('aws-sdk');
+var Promise = require('promise');
 
 // AWS.config.update({
 // 	accessKeyId: process.env.AWS_KEY, 
@@ -107,10 +107,11 @@ var put_params = function(items) {
 };
 
 module.exports.scan = function(table_name, start_key) {
+	console.log("scanning " + table_name);
 	var params = {
 		TableName:table_name,
-		ConsistentRead:'true',
-		ExclusiveStartKey: start_key,
+		ConsistentRead:true,
+		// ExclusiveStartKey: start_key,
 		Select:'ALL_ATTRIBUTES'
 	};
 	return new Promise(function(resolve, reject) {

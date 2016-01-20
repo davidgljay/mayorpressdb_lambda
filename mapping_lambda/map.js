@@ -6,6 +6,8 @@ var dynamo = require('./api/dynamo'),
 TagHash = require('./taghash.js'),
 s3 = require('./api/s3');
 
+require('./config');
+
 var tag_hash = new TagHash();
 
 module.exports.handler = function(event, context) {
@@ -13,9 +15,9 @@ module.exports.handler = function(event, context) {
 	scan_dynamo('')
 	.then(post_results)
 	.then(function() {
-		context.succed('Mapping scan complete');
+		context.succeed('Mapping scan complete');
 	}, function(err) {
-		context.fail('Mapping scan error:' + err);
+		context.fail(err);
 	});
 };
 
@@ -23,9 +25,8 @@ module.exports.handler = function(event, context) {
 var scan_dynamo = function(lastkey) {
 	return dynamo.scan(process.env.SCAN_DYNAMO, lastkey)
 	 	.then(function(results) {
-			console.log(results);
 			tag_hash.parsetags(results.Items);
-			if(results.lastKey!==null) {
+			if(results.lastKey) {
 				return scan_dynamo(lastkey);
 			} else {
 				return;
@@ -34,5 +35,6 @@ var scan_dynamo = function(lastkey) {
 };
 
 var post_results = function() {
-	return s3.batch_post(tag_hash.hash);
+	console.log(tag_hash.post_prep().length);
+	return s3.batch_post(tag_hash.post_prep());
 };

@@ -2,7 +2,7 @@
 
 var Taghash = function() {
 	this.maps = {
-		all_tags:[]
+		all:[]
 	};
 };
 
@@ -39,8 +39,8 @@ Taghash.prototype.parsetags = function(tags) {
 		var tag = tags[i];
 		self.maps.all.push({
 			tag:tag.tag,
-			count:tag.articles.length,
-			med_date:med_date(tag.articles)
+			count:tag.releases.SS.length,
+			med_date:med_date(tag.releases.SS)
 		});
 
 		self.maps['tags/'+tag.tag] = {
@@ -49,26 +49,26 @@ Taghash.prototype.parsetags = function(tags) {
 		};
 
 		for (var key in tag) {
-			if (key.slice(0,13)=="city_articles") {
+			if (key.slice(0,13)=="city_releases") {
 				var city = key.slice(13),
 				city_name=tag['city_name'+city];
-				if (!self.maps.hasOwnProperty(city)) {
-					self.maps[city] = {
+				if (!self.maps.hasOwnProperty('cities/'+city)) {
+					self.maps['cities/'+city] = {
 						city:city_name,
 						tags:[]
 					};
 				}
 				self.maps['cities/'+city].tags.push({
 					tag:tag.tag,
-					count:tag[key].length,
-					med_date:med_date(tag[key]),
-					articles:tag[key]
+					count:tag[key].SS.length,
+					med_date:med_date(tag[key].SS),
+					releases:tag[key].SS
 				});
 				self.maps['tags/'+tag.tag].cities.push({
 					city:city_name,
-					count:tag[key].length,
-					med_date:med_date(tag[key]),
-					articles:tag[key]
+					count:tag[key].SS.length,
+					med_date:med_date(tag[key].SS),
+					releases:tag[key].SS
 				});
 
 				//TODO: Add people
@@ -78,30 +78,34 @@ Taghash.prototype.parsetags = function(tags) {
 	}
 };
 
-Taghash.prototype.dynamo_prep = function(map) {
-	var items = [];
-	for (var key in map) {
+Taghash.prototype.post_prep = function() {
+	var self=this;
+	var items=[];
+	for (var key in self.maps) {
 		items.push({
-			path:{S:key},
-			data:{M:map[key]}
+			path:key,
+			data:self.maps[key]
 		});
 	}
 	return items;
 };
 
 var med_date = Taghash.prototype.med_date = function(releases) {
+	if (releases.length ===1) {
+		return releases[0].date;
+	}
+
 	//Sort the array of releases by date
 	releases = releases.sort(function(a,b) {
 		return Date.parse(a.date)-Date.parse(b.date);
 	});
-
 	//If an odd number of releases
 	var halfway = releases.length/2;
 	if (releases.length%2===1) {
 		return releases[halfway-0.5].date;
 	} else {
 	//If an even number of releases
-		return new Date((Date.parse(releases[halfway].date) + Date.parse(releases[halfway+1].date))/2);
+		return new Date((Date.parse(releases[halfway].date) + Date.parse(releases[halfway-1].date))/2);
 	}
 };
 
