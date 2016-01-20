@@ -36,22 +36,26 @@ var Taghash = function() {
 Taghash.prototype.parsetags = function(tags) {
 	var self = this;
 	for (var i = tags.length - 1; i >= 0; i--) {
-		var tag = tags[i];
+		var tag = tags[i],
+		tagname = tag.tag.S.replace(/[^a-z,0-9]/i,'_');
+
 		self.maps.all.push({
-			tag:tag.tag,
+			tag:tagname,
 			count:tag.releases.SS.length,
 			med_date:med_date(tag.releases.SS)
 		});
 
-		self.maps['tags/'+tag.tag] = {
-			tag:tag.tag,
+
+		self.maps['tags/'+tagname] = {
+			tag:tagname,
 			cities:[]
 		};
 
 		for (var key in tag) {
 			if (key.slice(0,13)=="city_releases") {
 				var city = key.slice(13),
-				city_name=tag['city_name'+city];
+				city_name=tag['city_name'+city].S;
+				city = city.toLowerCase();
 				if (!self.maps.hasOwnProperty('cities/'+city)) {
 					self.maps['cities/'+city] = {
 						city:city_name,
@@ -59,12 +63,12 @@ Taghash.prototype.parsetags = function(tags) {
 					};
 				}
 				self.maps['cities/'+city].tags.push({
-					tag:tag.tag,
+					tag:tagname,
 					count:tag[key].SS.length,
 					med_date:med_date(tag[key].SS),
 					releases:tag[key].SS
 				});
-				self.maps['tags/'+tag.tag].cities.push({
+				self.maps['tags/'+tagname].cities.push({
 					city:city_name,
 					count:tag[key].SS.length,
 					med_date:med_date(tag[key].SS),
