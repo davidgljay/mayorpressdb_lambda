@@ -1,0 +1,15 @@
+{
+  "name": "get_icons",
+  "version": "1.0.0",
+  "description": "Script which retrieves tag icons from The Noun Project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmin-node ./spec"
+  },
+  "author": "David Jay",
+  "dependencies": {
+  	"the-noun-project":"2.0.1",
+  	"aws-sdk":"2.2.33"
+  },
+  "license": "ISC"
+}
