@@ -9,7 +9,7 @@
   "author": "David Jay",
   "dependencies": {
   	"the-noun-project":"2.0.1",
-  	"aws-sdk":"2.2.33"
+  	"promise":"7.1.1"
   },
   "license": "ISC"
 }
