@@ -1,5 +1,4 @@
-var aws = require('aws-sdk'),
-Promise = require('promise');
+var aws = require('aws-sdk');
 
 var ec2 = new aws.EC2({apiVersion: '2015-10-01'}),
 ecs = new aws.ECS(),
@@ -12,7 +11,8 @@ module.exports.handler = function(event, context) {
       DryRun: false
     };
 
-    var task = JSON.parse(event.Records[0].SNS.Message).task;
+    var task = JSON.parse(event.Records[0].Sns.Message).task;
+    console.log("Starting task:" + task);
 
     //Start the instance if it's not already running.
     ec2.startInstances(instanceParams, function(err, data) {
@@ -26,7 +26,6 @@ module.exports.handler = function(event, context) {
 };
 
 var runTask = function(task, context) {
-  //event.SNS.Records[0].Message.taskDefinition
     var ContainerParams = {
       taskDefinition: task,
       cluster: 'mayorsdb',
@@ -37,48 +36,4 @@ var runTask = function(task, context) {
       else if (data.failures) setTimeout(runTask(task, context), 250);
       else context.succeed("Successfully started task " + task + "\n" + JSON.stringify(data));
   });
-}
-
-//TODO: Move to separate function. Ideally this logic operates elsewhere.
-
-var updateDynamo = function() {
-    
-  var update_messages = [
-    {
-      TableName:'mayorsdb_articles',
-      updates:[
-        {
-          ReadCapacityUnits:1,
-          WriteCapacityUnits:15
-        },{
-          index:'city-index',
-          ReadCapacityUnits:5,
-          WriteCapacityUnits:1
-        },
-        {
-          index:'url-index',
-          ReadCapacityUnits:4,
-          WriteCapacityUnits:1
-        }
-      ]
-    },
-    {
-      TableName:'mayorsdb_tag',
-      updates:[
-        {
-          ReadCapacityUnits:1,
-          WriteCapacityUnits:10
-        }
-      ]
-    } 
-  ];
-
-  for (var i=0, i<update_messages.length, i++) {
-    sns.publish({
-      Message: update_messages[i],
-      Subject: 'DynamoDB Update',
-      TargetArn: 'STRING_VALUE',
-      TopicArn: 'STRING_VALUE'
-    })
-  };
-}
+};

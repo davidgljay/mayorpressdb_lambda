@@ -57,6 +57,7 @@ function updateProvisioning(message, context) {
 
   //Perform the update
   dynamodb.updateTable(dynamoUpdateParams, function(err, data) {
+      console.log(message)
     if (err) console.error(err);
     if (message.updates.length===0) {
          //Optionally send an SNS message once the updates are complete.
@@ -66,6 +67,8 @@ function updateProvisioning(message, context) {
             context.succeed(data);
         }
     } else {
+        console.log("Updating Dynamodb Capacity");
+        console.log(message);
         updateProvisioning(message, context);
     }
   }); 
@@ -73,6 +76,8 @@ function updateProvisioning(message, context) {
 
 function sendSns(snsMsg, context) {
     sns.publish(snsMsg, function(err, data) {
+        console.log("Message sent");
+        console.log(data);
         if (err) context.fail(err);
         else context.succeed('Updated dynamo and sent message');
     })
