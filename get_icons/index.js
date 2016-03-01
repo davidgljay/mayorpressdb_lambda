@@ -10,13 +10,10 @@ s3 = new AWS.S3();
 
 var handler = exports.handler = function(event, context) {
 
-	var promise_chain = new Promise(function(resolve) {resolve();});
-
-	for (var i=0; i<event.Records.length; i++) {
-		console.log(i);
-		//Add promises to get each icon, upload it to S3 and update DynamoDB
-		promise_chain = promise_chain.then(getAndPostIcon(event, i));
-	}
+	var promise_chain = new Promise(function(resolve) {resolve();}),
+	i=0;
+	//Add promises to get each icon, upload it to S3 and update DynamoDB
+	promise_chain = promise_chain.then(getAndPostIcon(event, i));
 
 	promise_chain.then(
 		function() {
@@ -29,21 +26,30 @@ var handler = exports.handler = function(event, context) {
 
 function getAndPostIcon (event, i) {
 	return function() {
-		var tag = event.Records[i].mayorsdb_tags.NewImage.tag.S;
+		var tag = event.Records[i].mayorsdb_tags.NewImage.tag.S,
+		promise;
 
 		//Only get a icon if one has not already been added
 		if (!event.Records[i].mayorsdb_tags.NewImage.icon_attrib) {
-			return getIcon(tag)
+			promise = getIcon(tag)
 			.then(function(icon) {
 				return Promise.all([
 						updateS3(icon, tag),
 						updateDynamoDB(icon, tag)
 					])
-			});
+			})
 		} else {
 			console.log("Skipping " + tag);
-			return
+			promise = new Promise(function(resolve) {resolve();});
 		}
+
+		return promise.then(function() {
+			if (i<event.Records.length-1) {
+				return getAndPostIcon(event, i+1)
+			} else {
+				return
+			};
+		});
 
 	}
 
